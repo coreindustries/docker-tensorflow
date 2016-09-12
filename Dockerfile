@@ -37,7 +37,7 @@ ENV PYTHON_BIN_PATH /usr/bin/python
 # http://bazel.io/docs/install.html
 # RUN wget https://github.com/bazelbuild/bazel/releases/download/0.2.2/bazel-0.2.2-installer-linux-x86_64.sh
 RUN wget https://github.com/bazelbuild/bazel/releases/download/0.3.0/bazel-0.3.0-installer-linux-x86_64.sh
-RUN chmod +x bazel-0.3.0-installer-linux-x86_64.sh && ./bazel-0.3.0-installer-linux-x86_64.sh --user
+RUN chmod +x bazel-0.3.0-installer-linux-x86_64.sh;./bazel-0.3.0-installer-linux-x86_64.sh --user
 
 
 # SET UP OUR ENTRY POINT
