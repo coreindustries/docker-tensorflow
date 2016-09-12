@@ -8,6 +8,13 @@ RUN echo "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty main restricted uni
     echo "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-security main restricted universe multiverse" >> /etc/apt/sources.list && \
     DEBIAN_FRONTEND=noninteractive apt-get update
 
+# cache apt-get requests locally. 
+# Requires: docker run -d -p 3142:3142 --name apt_cacher_run apt_cacher
+# https://docs.docker.com/engine/examples/apt-cacher-ng/
+# docker build --build-arg APT_PROXY=http://$(ipconfig getifaddr en0):3142 . -t coreindustries/digits-tensorflow .
+RUN  echo 'Acquire::http { Proxy "http://192.168.150.50:3142"; };' >> /etc/apt/apt.conf.d/01proxy
+# RUN  echo 'Acquire::http { Proxy "'+HTTP_PROXY+'"; };' >> /etc/apt/apt.conf.d/01proxy
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
 	build-essential \
 	g++ \
