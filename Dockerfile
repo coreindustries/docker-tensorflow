@@ -1,6 +1,13 @@
 # FROM ubuntu:wily
 FROM nvidia/cuda:8.0-cudnn5-runtime
 
+# http://layer0.authentise.com/docker-4-useful-tips-you-may-not-know-about.html
+# pick a mirror for apt-get
+RUN echo "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty main restricted universe multiverse" > /etc/apt/sources.list && \
+    echo "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-updates main restricted universe multiverse" >> /etc/apt/sources.list && \
+    echo "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-security main restricted universe multiverse" >> /etc/apt/sources.list && \
+    DEBIAN_FRONTEND=noninteractive apt-get update
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
 	build-essential \
 	g++ \
