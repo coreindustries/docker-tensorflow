@@ -1,6 +1,6 @@
 # https://github.com/tensorflow/tensorflow/tree/master/tensorflow/tools/docker
+# http://textminingonline.com/dive-into-tensorflow-part-iii-gtx-1080-ubuntu16-04-cuda8-0-cudnn5-0-tensorflow
 
-# FROM ubuntu:wily
 FROM nvidia/cuda:8.0-cudnn5-runtime
 
 # http://layer0.authentise.com/docker-4-useful-tips-you-may-not-know-about.html
@@ -13,30 +13,27 @@ RUN echo "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty main restricted uni
 # cache apt-get requests locally. 
 # Requires: docker run -d -p 3142:3142 --name apt_cacher_run apt_cacher
 # https://docs.docker.com/engine/examples/apt-cacher-ng/
-# docker build --build-arg APT_PROXY=http://$(ipconfig getifaddr en0):3142 . -t coreindustries/digits-tensorflow .
 RUN  echo 'Acquire::http { Proxy "http://192.168.150.50:3142"; };' >> /etc/apt/apt.conf.d/01proxy
-# RUN  echo 'Acquire::http { Proxy "'+HTTP_PROXY+'"; };' >> /etc/apt/apt.conf.d/01proxy
 
+MAINTAINER Craig Citro <craigcitro@google.com>
+
+# Pick up some TF dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-	build-essential \
-	g++ \
-	git \
-	libssl-dev \
-	zlib1g-dev \
-	default-jre \
-	default-jdk \
-	pkg-config \
-	python-pip \
-	python-dev \
-	python-numpy \
-	wget \
-	swig \
-	unzip \
-	zip \
-	zlib1g-dev \
-	&& rm -rf /var/lib/apt/lists/*
+        build-essential \
+        curl \
+        libfreetype6-dev \
+        libpng12-dev \
+        libzmq3-dev \
+        pkg-config \
+        python \
+        python-dev \
+        rsync \
+        software-properties-common \
+        unzip \
+        && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# PIP
 RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
     python get-pip.py && \
     rm get-pip.py
@@ -51,19 +48,6 @@ RUN pip --no-cache-dir install \
     python -m ipykernel.kernelspec
 
 ENV TENSORFLOW_VERSION 0.10.0rc0
-RUN pip install --upgrade pip
-RUN pip install -U protobuf==3.0.0b2 asciitree numpy
-
-ENV PYTHON_BIN_PATH /usr/bin/python
-
-# install bazel
-# http://bazel.io/docs/install.html
-# RUN wget https://github.com/bazelbuild/bazel/releases/download/0.2.2/bazel-0.2.2-installer-linux-x86_64.sh
-RUN wget https://github.com/bazelbuild/bazel/releases/download/0.3.0/bazel-0.3.0-installer-linux-x86_64.sh
-RUN chmod +x bazel-0.3.0-installer-linux-x86_64.sh
-RUN ./bazel-0.3.0-installer-linux-x86_64.sh --user
-
-ENV TENSORFLOW_VERSION 0.10.0rc0
 
 # --- DO NOT EDIT OR DELETE BETWEEN THE LINES --- #
 # These lines will be edited automatically by parameterized_docker_build.sh. #
@@ -75,11 +59,6 @@ ENV TENSORFLOW_VERSION 0.10.0rc0
 RUN pip --no-cache-dir install \
     http://storage.googleapis.com/tensorflow/linux/gpu/tensorflow-${TENSORFLOW_VERSION}-cp27-none-linux_x86_64.whl
 # --- ~ DO NOT EDIT OR DELETE BETWEEN THE LINES --- #
-
-# SET UP OUR ENTRY POINT
-# ADD setup.sh /setup.sh
-# RUN chmod +x /setup.sh
-# CMD /setup.sh
 
 # Set up our notebook config.
 COPY jupyter_notebook_config.py /root/.jupyter/
