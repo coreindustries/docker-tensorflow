@@ -49,6 +49,7 @@ RUN pip --no-cache-dir install \
 
 ENV TENSORFLOW_VERSION 0.10.0rc0
 
+
 # --- DO NOT EDIT OR DELETE BETWEEN THE LINES --- #
 # These lines will be edited automatically by parameterized_docker_build.sh. #
 # COPY _PIP_FILE_ /
@@ -70,6 +71,8 @@ COPY notebooks /notebooks
 #   https://github.com/ipython/ipython/issues/7062
 # We just add a little wrapper script.
 COPY run_jupyter.sh /
+
+ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
 # TensorBoard
 EXPOSE 6006
