@@ -1,1 +1,1 @@
-docker run --rm -it --name tensorflow -v /media/corey/raid/projects:/projects coreindustries/tensorflow
+docker run --rm -it -p 8888:8888 --name tensorflow -v /media/corey/raid/projects:/projects coreindustries/tensorflow
