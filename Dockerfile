@@ -31,6 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         rsync \
         software-properties-common \
         unzip \
+        libcurl3-dev \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -83,3 +84,9 @@ EXPOSE 8888
 WORKDIR "/notebooks"
 
 CMD ["/run_jupyter.sh"]
+
+# I tensorflow/stream_executor/dso_loader.cc:108] successfully opened CUDA library libcublas.so locally
+# I tensorflow/stream_executor/dso_loader.cc:102] Couldn't open CUDA library libcudnn.so. LD_LIBRARY_PATH: /usr/local/cuda/lib64:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:
+# I tensorflow/stream_executor/cuda/cuda_dnn.cc:2259] Unable to load cuDNN DSO
+
+
