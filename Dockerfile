@@ -73,7 +73,7 @@ ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 # https://bazel.build/versions/master/docs/install.html
 RUN sudo add-apt-repository ppa:webupd8team/java && \
     sudo apt-get update && \
-    sudo apt-get install oracle-java8-installer
+    sudo apt-get install -y oracle-java8-installer
 
 RUN echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list && \
     curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add -
