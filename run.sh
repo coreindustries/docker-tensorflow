@@ -6,4 +6,4 @@
 
 
 # tensorboard and iPython 
-nvidia-docker run --rm -it -p 8888:8888 --name tensorflow -v /mnt/raid/projects:/projects gcr.io/tensorflow/tensorflow:latest-gpu
+nvidia-docker run --rm -it -p 8888:8888 -p 6006:6006 --name tensorflow -v /mnt/raid/projects:/projects gcr.io/tensorflow/tensorflow:latest-gpu
