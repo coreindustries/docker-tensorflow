@@ -14,7 +14,7 @@ RUN echo "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty main restricted uni
 # cache apt-get requests locally. 
 # Requires: docker run -d -p 3142:3142 --name apt_cacher_run apt_cacher
 # https://docs.docker.com/engine/examples/apt-cacher-ng/
-RUN  echo 'Acquire::http { Proxy "http://192.168.150.50:3142"; };' >> /etc/apt/apt.conf.d/01proxy
+# RUN  echo 'Acquire::http { Proxy "http://192.168.150.50:3142"; };' >> /etc/apt/apt.conf.d/01proxy
 
 MAINTAINER Craig Citro <craigcitro@google.com>
 
@@ -59,9 +59,49 @@ ENV TENSORFLOW_VERSION 0.10.0rc0
 # RUN rm -f /_PIP_FILE_
 
 # Install TensorFlow GPU version.
-RUN pip --no-cache-dir install \
-    http://storage.googleapis.com/tensorflow/linux/gpu/tensorflow-${TENSORFLOW_VERSION}-cp27-none-linux_x86_64.whl
+# RUN pip --no-cache-dir install \
+#     http://storage.googleapis.com/tensorflow/linux/gpu/tensorflow-${TENSORFLOW_VERSION}-cp27-none-linux_x86_64.whl
 # --- ~ DO NOT EDIT OR DELETE BETWEEN THE LINES --- #
+
+er script.
+COPY run_jupyter.sh /
+
+ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+
+
+# BAZEL
+# https://bazel.build/versions/master/docs/install.html
+RUN sudo add-apt-repository ppa:webupd8team/java && \
+    sudo apt-get update && \
+    sudo apt-get install oracle-java8-installer
+
+RUN echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list && \
+    curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add -
+
+RUN sudo apt-get update && sudo apt-get install bazel
+
+
+
+
+#http://bazel.io/blog/2016/01/27/continuous-integration.html
+
+# set up Tensor Flow and SyntaxNet
+RUN git clone https://github.com/google/re2.git && \
+    cd re2 && \
+    make && \
+    make install
+
+RUN git clone --recursive https://github.com/tensorflow/models.git && \
+    cd models/syntaxnet/tensorflow && \
+    export PYTHON_BIN_PATH=/usr/bin/python && \
+    export TF_NEED_CUDA=0 && \
+    ./configure && \
+    cd ..
+
+#bazel test syntaxnet/... util/utf8/... --ignore_unsupported_sandboxing
+ENV BAZEL="${BASE}/binary/bazel --bazelrc=${BASE}/bin/bazel.bazelrc --batch"
+RUN ${BAZEL} test --genrule_strategy=standalone --spawn_strategy=standalone //...
+
 
 # Set up our notebook config.
 COPY jupyter_notebook_config.py /root/.jupyter/
@@ -71,10 +111,9 @@ COPY notebooks /notebooks
 
 # Jupyter has issues with being run directly:
 #   https://github.com/ipython/ipython/issues/7062
-# We just add a little wrapper script.
-COPY run_jupyter.sh /
+# We just add a little wrapp
 
-ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+
 
 # TensorBoard
 EXPOSE 6006
