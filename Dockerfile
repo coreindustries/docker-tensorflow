@@ -1,8 +1,9 @@
-# https://github.com/tensorflow/tensorflow/tree/master/tensorflow/tools/docker
+# https://github.com/tensorflow/tensorflow/blob/master/tensorflow/tools/docker/Dockerfile.gpu
 # http://textminingonline.com/dive-into-tensorflow-part-iii-gtx-1080-ubuntu16-04-cuda8-0-cudnn5-0-tensorflow
 
 # FROM nvidia/cuda:8.0-cudnn5-runtime
-FROM nvidia/cuda:7.5-cudnn5-runtime
+# FROM nvidia/cuda:7.5-cudnn5-runtime
+FROM nvidia/cuda:8.0-cudnn5-devel
 
 # http://layer0.authentise.com/docker-4-useful-tips-you-may-not-know-about.html
 # pick a mirror for apt-get
