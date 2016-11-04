@@ -3,24 +3,29 @@
 
 # FROM nvidia/cuda:8.0-cudnn5-runtime
 # FROM nvidia/cuda:7.5-cudnn5-runtime
-FROM nvidia/cuda:8.0-cudnn5-devel
+# FROM nvidia/cuda:8.0-cudnn5-devel
 
 # http://layer0.authentise.com/docker-4-useful-tips-you-may-not-know-about.html
 # pick a mirror for apt-get
-RUN echo "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty main restricted universe multiverse" > /etc/apt/sources.list && \
-    echo "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-updates main restricted universe multiverse" >> /etc/apt/sources.list && \
-    echo "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-security main restricted universe multiverse" >> /etc/apt/sources.list && \
-    DEBIAN_FRONTEND=noninteractive apt-get update
+# RUN echo "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty main restricted universe multiverse" > /etc/apt/sources.list && \
+#     echo "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-updates main restricted universe multiverse" >> /etc/apt/sources.list && \
+#     echo "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-security main restricted universe multiverse" >> /etc/apt/sources.list && \
+#     DEBIAN_FRONTEND=noninteractive apt-get update
 
 # cache apt-get requests locally. 
 # Requires: docker run -d -p 3142:3142 --name apt_cacher_run apt_cacher
 # https://docs.docker.com/engine/examples/apt-cacher-ng/
 # RUN  echo 'Acquire::http { Proxy "http://192.168.150.50:3142"; };' >> /etc/apt/apt.conf.d/01proxy
 
-MAINTAINER Craig Citro <craigcitro@google.com>
+FROM nvidia/cuda:8.0-cudnn5-devel
 
-# Pick up some TF dependencies
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
+        bzip2 \
+        unzip \
+        xz-utils \
+        software-properties-common \
+        python-software-properties \
         build-essential \
         curl \
         libfreetype6-dev \
@@ -30,12 +35,47 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         python \
         python-dev \
         rsync \
-        software-properties-common \
         unzip \
         libcurl3-dev \
-        && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
+
+# Default to UTF-8 file.encoding
+ENV LANG C.UTF-8
+
+
+# INSTALL JAVA
+RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
+
+RUN sudo add-apt-repository ppa:webupd8team/java && \
+    sudo apt-get update && \
+    sudo apt-get install -y oracle-java8-installer
+
+
+# INSTALL BAZEL
+RUN echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+RUN curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add -
+RUN sudo apt-get update && sudo apt-get install -y bazel
+
+
+# MAINTAINER Craig Citro <craigcitro@google.com>
+
+# # Pick up some TF dependencies
+# RUN apt-get update && apt-get install -y --no-install-recommends \
+#         build-essential \
+#         curl \
+#         libfreetype6-dev \
+#         libpng12-dev \
+#         libzmq3-dev \
+#         pkg-config \
+#         python \
+#         python-dev \
+#         rsync \
+#         software-properties-common \
+#         unzip \
+#         libcurl3-dev \
+#         && \
+#     apt-get clean && \
+#     rm -rf /var/lib/apt/lists/*
 
 RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
     python get-pip.py && \
@@ -65,21 +105,21 @@ ENV TENSORFLOW_VERSION 0.10.0rc0
 # --- ~ DO NOT EDIT OR DELETE BETWEEN THE LINES --- #
 
 
-COPY run_jupyter.sh /
+
 
 ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
 
 # BAZEL
-# https://bazel.build/versions/master/docs/install.html
-RUN sudo add-apt-repository ppa:webupd8team/java && \
-    sudo apt-get update && \
-    sudo apt-get install -y oracle-java8-installer
+# # https://bazel.build/versions/master/docs/install.html
+# RUN sudo add-apt-repository ppa:webupd8team/java && \
+#     sudo apt-get update && \
+#     sudo apt-get install -y oracle-java8-installer
 
-RUN echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list && \
-    curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add -
+# RUN echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list && \
+#     curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add -
 
-RUN sudo apt-get update && sudo apt-get install bazel
+# RUN sudo apt-get update && sudo apt-get install bazel
 
 
 
@@ -121,8 +161,9 @@ EXPOSE 6006
 # IPython
 EXPOSE 8888
 
-WORKDIR "/notebooks"
+COPY run_jupyter.sh /
 
+WORKDIR "/notebooks"
 CMD ["/run_jupyter.sh"]
 
 # I tensorflow/stream_executor/dso_loader.cc:108] successfully opened CUDA library libcublas.so locally
