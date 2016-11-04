@@ -39,6 +39,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libcurl3-dev \
         git \
         vim \
+        swig \
     && rm -rf /var/lib/apt/lists/*
 
 # Default to UTF-8 file.encoding
@@ -89,7 +90,7 @@ RUN git clone https://github.com/google/re2.git && \
 RUN git clone --recursive https://github.com/tensorflow/models.git && \
     cd models/syntaxnet/tensorflow && \
     export PYTHON_BIN_PATH=/usr/bin/python && \
-    export TF_NEED_CUDA=0 && \
+    export TF_NEED_CUDA=1 && \
     ./configure && \
     cd ..
 
