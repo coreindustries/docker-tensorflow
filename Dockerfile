@@ -1,9 +1,7 @@
-# https://github.com/tensorflow/tensorflow/blob/master/tensorflow/tools/docker/Dockerfile.gpu
-# http://textminingonline.com/dive-into-tensorflow-part-iii-gtx-1080-ubuntu16-04-cuda8-0-cudnn5-0-tensorflow
 
+FROM nvidia/cuda:8.0-cudnn5-devel
 # FROM nvidia/cuda:8.0-cudnn5-runtime
-# FROM nvidia/cuda:7.5-cudnn5-runtime
-# FROM nvidia/cuda:8.0-cudnn5-devel
+
 
 # http://layer0.authentise.com/docker-4-useful-tips-you-may-not-know-about.html
 # pick a mirror for apt-get
@@ -17,7 +15,6 @@
 # https://docs.docker.com/engine/examples/apt-cacher-ng/
 # RUN  echo 'Acquire::http { Proxy "http://192.168.150.50:3142"; };' >> /etc/apt/apt.conf.d/01proxy
 
-FROM nvidia/cuda:8.0-cudnn5-devel
 
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -48,7 +45,6 @@ ENV LANG C.UTF-8
 
 # INSTALL JAVA
 RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
-
 RUN sudo add-apt-repository ppa:webupd8team/java && \
     sudo apt-get update && \
     sudo apt-get install -y oracle-java8-installer
@@ -65,6 +61,8 @@ RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
     python get-pip.py && \
     rm get-pip.py
 
+
+# INSTALL PYTHON TOOLS
 RUN pip --no-cache-dir install \
         ipykernel \
         jupyter \
