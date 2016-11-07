@@ -64,6 +64,8 @@ RUN pip --no-cache-dir install \
     http://storage.googleapis.com/tensorflow/linux/gpu/tensorflow-${TENSORFLOW_VERSION}-cp27-none-linux_x86_64.whl
 # --- ~ DO NOT EDIT OR DELETE BETWEEN THE LINES --- #
 
+
+
 # Set up our notebook config.
 COPY jupyter_notebook_config.py /root/.jupyter/
 
@@ -74,6 +76,10 @@ COPY notebooks /notebooks
 #   https://github.com/ipython/ipython/issues/7062
 # We just add a little wrapper script.
 COPY run_jupyter.sh /
+
+# add google cloud tools and samples
+WORKDIR /notebooks
+RUN curl https://storage.googleapis.com/cloud-ml/scripts/setup_docker.sh | bash
 
 # TensorBoard
 EXPOSE 6006
