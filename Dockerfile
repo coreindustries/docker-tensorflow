@@ -42,6 +42,7 @@ RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
     rm get-pip.py
 
 RUN pip --no-cache-dir install \
+        --upgrade pip \
         ipykernel \
         jupyter \
         matplotlib \
@@ -78,6 +79,7 @@ COPY notebooks /notebooks
 COPY run_jupyter.sh /
 
 # add google cloud tools and samples
+# https://cloud.google.com/ml/docs/how-tos/getting-set-up
 WORKDIR /notebooks
 RUN curl https://storage.googleapis.com/cloud-ml/scripts/setup_docker.sh | bash
 
