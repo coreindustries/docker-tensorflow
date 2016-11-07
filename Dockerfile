@@ -33,6 +33,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         unzip \
         libjpeg-dev \
         libpng12-dev \
+        bzip2 \
+        unzip \
+        xz-utils \
+        python-software-properties \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -65,6 +69,22 @@ RUN pip --no-cache-dir install \
     http://storage.googleapis.com/tensorflow/linux/gpu/tensorflow-${TENSORFLOW_VERSION}-cp27-none-linux_x86_64.whl
 # --- ~ DO NOT EDIT OR DELETE BETWEEN THE LINES --- #
 
+
+# Default to UTF-8 file.encoding
+ENV LANG C.UTF-8
+
+# INSTALL JAVA
+RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
+
+RUN sudo add-apt-repository ppa:webupd8team/java && \
+    sudo apt-get update && \
+    sudo apt-get install -y oracle-java8-installer
+
+
+# INSTALL BAZEL
+RUN echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+RUN curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add -
+RUN sudo apt-get update && sudo apt-get install -y bazel
 
 
 # Set up our notebook config.
