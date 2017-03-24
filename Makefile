@@ -1,9 +1,8 @@
 
-# ENV = -S us2.ethpool.org:3333 -O 0x81cF9c570739B7473013Fc19b11c0577Fb78caB9.DEEPLEARNING
-ENV =
-NS = coreindustries
-VERSION ?= latest
-REPO = docker-tensorflow
+ENV = 
+NS = tensorflow
+VERSION ?= latest-gpu
+REPO = tensorflow
 NAME = tensorflow
 INSTANCE = default
 PORTS = -p 8888:8888 -p 6006:6006 
