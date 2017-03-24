@@ -6,7 +6,7 @@ REPO = tensorflow
 NAME = tensorflow
 INSTANCE = default
 PORTS = -p 8888:8888 -p 6006:6006 
-VOLUMES = /mnt/raid/projects:/projects
+VOLUMES = -v /mnt/raid/projects:/projects
 
 .PHONY: build push shell run start stop rm release
 
