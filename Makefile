@@ -8,7 +8,7 @@ REPO = tensorflow
 NAME = tensorflow
 INSTANCE = default
 PORTS = -p 8889:8888/tcp
-VOLUMES = -v ~/projects:/projects
+VOLUMES = -v ~/projects:/projects -v `pwd`/notebooks:/notebooks
 
 # FOR GPU RUNS:
 # nvidia-docker
