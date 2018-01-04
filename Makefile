@@ -1,13 +1,13 @@
 
 # ENV =
-ENV = 
+ENV = -e PASSWORD=pass
 NS = tensorflow
 #VERSION ?= latest
 VERSION ?= latest-gpu
 REPO = tensorflow
 NAME = tensorflow
 INSTANCE = default
-PORTS = -p 8889:8888/tcp
+PORTS = -p 8888:8888/tcp
 VOLUMES = -v ~/projects:/projects -v `pwd`/notebooks:/notebooks
 
 # FOR GPU RUNS:
